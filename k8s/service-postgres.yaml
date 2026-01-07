@@ -7,3 +7,8 @@ metadata:
 spec:
   selector:
     app: product-postgres
+  ports:
+    - name: pg
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP
