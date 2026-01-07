@@ -41,7 +41,7 @@ spec:
             - name: TZ
               valueFrom: { configMapKeyRef: { name: configmap, key: TIME_ZONE } }
 
-          # ✅ Probes corrigées (endpoint racine car actuator indisponible)
+          
           startupProbe:
             httpGet:
               path: /
