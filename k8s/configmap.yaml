@@ -6,8 +6,7 @@ metadata:
   namespace: product
 data:
   DB_HOST: "product-postgres"
-  DB_PORT: "5432"              # Postgres par défaut
-  DB_NAME: "products_db"       # selon ta conf Spring
-  SERVER_PORT: "8081"          # selon ta conf Spring
-  TIME_ZONE: "Africa/Tunis"    # optionnel (au cas où ton app le lit)
-
+  DB_PORT: "5432"
+  DB_NAME: "products_db"
+  SERVER_PORT: "8081"
+  TIME_ZONE: "Africa/Tunis"
