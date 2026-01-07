@@ -1,0 +1,70 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-web
+  namespace: product
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: product-web
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  progressDeadlineSeconds: 600
+  template:
+    metadata:
+      labels:
+        app: product-web
+    spec:
+      containers:
+        - name: product-service
+          image: mariem507/product-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+          env:
+            - name: DB_HOST
+              valueFrom: { configMapKeyRef: { name: configmap, key: DB_HOST } }
+            - name: DB_PORT
+              valueFrom: { configMapKeyRef: { name: configmap, key: DB_PORT } }
+            - name: DB_NAME
+              valueFrom: { configMapKeyRef: { name: configmap, key: DB_NAME } }
+            - name: DB_USER
+              valueFrom: { secretKeyRef: { name: secret, key: DB_USER } }
+            - name: DB_PASSWORD
+              valueFrom: { secretKeyRef: { name: secret, key: DB_PASSWORD } }
+            - name: SERVER_PORT
+              valueFrom: { configMapKeyRef: { name: configmap, key: SERVER_PORT } }
+            - name: TZ
+              valueFrom: { configMapKeyRef: { name: configmap, key: TIME_ZONE } }
+
+          # Probes Spring Boot (adapter si nécessaire)
+          startupProbe:
+            httpGet:
+              path: /actuator/health   # si Actuator non activé, utilise /health
+              port: 8081
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 12
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health   # ou /health
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health   # ou /health
+              port: 8081
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 6
